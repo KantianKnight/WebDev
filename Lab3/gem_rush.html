@@ -94,6 +94,7 @@
     <script src="sprite.js"></script>
     <script src="player.js"></script>
     <script src="gem.js"></script>
+    <script src="fire.js"></script>
     <script>
     $(function() {
         /* Get the canvas and 2D context */
@@ -118,6 +119,13 @@
         /* Create the sprites in the game */
         const player = Player(context, 427, 240, gameArea); // The player
         const gem = Gem(context, 427, 350, "green");        // The gem
+        const arenaCorners = gameArea.getPoints();
+        const fires = [
+            Fire(context, ...arenaCorners.topLeft),
+            Fire(context, ...arenaCorners.topRight),
+            Fire(context, ...arenaCorners.bottomLeft),
+            Fire(context, ...arenaCorners.bottomRight)
+        ];
 
         /* The main processing of the game */
         function doFrame(now) {
@@ -128,24 +136,40 @@
             const timeRemaining = Math.ceil((totalGameTime * 1000 - gameTimeSoFar) / 1000);
             $("#time-remaining").text(timeRemaining);
 
-
             /* TODO */
             /* Handle the game over situation here */
-
+            if (timeRemaining <= 0) {
+                $("#game-over").show();
+                sounds.background.pause();
+                sounds.collect.pause();
+                sounds.gameover.play();
+                return;
+            }
 
             /* Update the sprites */
             gem.update(now);
             player.update(now);
-
+            fires.forEach((fire) => fire.update(now));
 
             /* TODO */
             /* Randomize the gem and collect the gem here */
+            if (gem.getAge(now) > gemMaxAge) {
+                gem.randomize(gameArea);
+            }
 
+            const { x: gemX, y: gemY } = gem.getXY();
+            if (player.getBoundingBox().isPointInBox(gemX, gemY)) {
+                console.log("Collected a gem!");
+                $("#final-gems").text(++collectedGems);
+                gem.randomize(gameArea);
+                sounds.collect.play();
+            }
 
             /* Clear the screen */
             context.clearRect(0, 0, cv.width, cv.height);
 
             /* Draw the sprites */
+            fires.forEach((fire) => fire.draw());
             gem.draw();
             player.draw();
 
@@ -158,24 +182,26 @@
             /* Hide the start screen */
             $("#game-start").hide();
 
+            // Randomize the first gem
+            gem.randomize(gameArea);
+
+            // Include background music
+            sounds.background.play();
+
             /* Handle the keydown of arrow keys and spacebar */
             $(document).on("keydown", function(event) {
-
-
                 /* TODO */
                 /* Handle the key down */
-
-
+                if (event.keyCode < 37 || event.keyCode > 40) return;
+                player.move(event.keyCode - 36);
             });
 
             /* Handle the keyup of arrow keys and spacebar */
             $(document).on("keyup", function(event) {
-
-
                 /* TODO */
                 /* Handle the key up */
-
-
+                if (event.keyCode < 37 || event.keyCode > 40) return;
+                player.stop(event.keyCode - 36);
             });
 
             /* Start the game */
