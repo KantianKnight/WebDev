@@ -1,0 +1,143 @@
+* {
+    font-family: "Helvetica", sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 20px;
+}
+
+/*
+ * Other settings
+ */
+
+.row, .col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+.col {
+    flex-direction: column;
+    padding: 0;
+}
+
+.title {
+    font-size: 60px;
+    font-weight: bold;
+    text-align: center;
+    padding: 40px 0;
+}
+
+/*
+ * Card game rules
+ */
+
+#card-game-area {
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+}
+
+#card-game-start-page,
+#card-game-play-page {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+
+.hand-title {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    padding: 5px;
+    background: #EEE;
+    border-radius: 10px;
+    width: 95%;
+    user-select: none;
+}
+
+.card {
+    position: relative;
+    width: 150px;
+    height: 200px;
+    border: lightgray solid 1px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 5px gray;
+    user-select: none;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.card > div {
+    position: absolute;
+    display: inline-block;
+    text-align: center;
+}
+
+.card > div:first-child {
+    top: 10px;
+    left: 10px;
+}
+
+.card > div:last-child {
+    bottom: 10px;
+    right: 10px;
+    transform: rotate(180deg);
+}
+
+.flipped {
+    background-image: linear-gradient(45deg, transparent 45%,
+                                      blue 45%, blue 55%,
+                                      transparent 55%),
+                      linear-gradient(135deg, transparent 45%,
+                                      blue 45%, blue 55%,
+                                      transparent 55%);
+    background-size: 30px 30px;
+}
+
+.flipped > div {
+    display: none;
+}
+
+.card div.rank {
+    font-size: 35px;
+    margin-bottom: -15px;
+}
+
+.card div.suit {
+    font-size: 50px;
+}
+
+.card div.red {
+    color: red;
+}
+
+#result {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    font-weight: bold;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    user-select: none;
+}

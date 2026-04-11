@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Poker Game</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- The card game area -->
+    <div id="card-game-area">
+
+        <!-- The card game start content -->
+        <div id="card-game-start-page">
+            <div class="row">
+                <div class="col">
+                    <div class="title">
+                        &spades; <span style="color: red">&hearts;</span>
+                        The Poker Game
+                        &clubs; <span style="color: red">&diams;</span>
+                    </div>
+                    <button id="start-game-button">Start Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- The card game play content -->
+        <div id="card-game-play-page" style="display: none">
+            <div class="row">
+                <div class="col">
+                    <div class="hand-title">Computer</div>
+                    <div id="computer-hand" class="row"></div>
+                    <div class="hand-title">You</div>
+                    <div id="player-hand" class="row"></div>
+                    <div class="row">
+                        <div class="col">
+                            <button id="replace-cards-button">Replace Cards</button>
+                        </div>
+                        <div class="col">
+                            <button id="confirm-hand-button">Confirm the Hand!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- The overlay area for show the result of the game -->
+    <div id="result" style="display: none">-</div>
+
+    <!-- JavaScript files for the poker game -->
+    <script src="scripts/hand.js"></script>
+    <script src="scripts/poker_game.js"></script>
+
+    <!-- Initialize the game -->
+    <script>
+    $(function() {
+        PokerGame.init();
+    });
+    </script>
+</body>
+</html>
