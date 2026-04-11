@@ -35,9 +35,17 @@ app.get("/start", (req, res) => {
     //
 
     // Add your code here
+    for (let i = 0; i < 5; i++) {
+        player.push(deck.draw());
+        computer.push(deck.draw());
+    }
+
+    // DEBUG: Print the cards to the console
+    console.log("Player hand:", player);
+    console.log("Computer hand:", computer, "\n");
 
     // Return the hand
-    res.json({ hand: [] });
+    res.json({ hand: player });
 });
 
 // Handle the /replace endpoint
@@ -63,9 +71,18 @@ app.post("/replacecards", (req, res) => {
     //
 
     // Add your code here
+    for (const card of cards) {
+        const idx = player.indexOf(card);
+        if (idx != -1)
+            player[idx] = deck.draw();
+    }
+
+    // DEBUG: Print the cards to the console
+    console.log("Player hand:", player);
+    console.log("Computer hand:", computer, "\n");
 
     // Return the hand
-    res.json({ hand: [] });
+    res.json({ hand: player });
 });
 
 // Handle the /confirm endpoint

@@ -25,7 +25,8 @@ const PokerGame = (function() {
                     //
 
                     // Add your code here
-
+                    // true makes the cards clickable for replacement
+                    Hand.draw($("#player-hand"), json.hand, true);
                 })
                 .catch((err) => { alert(err); });
         });
@@ -43,8 +44,22 @@ const PokerGame = (function() {
             // sending a POST request to the server
             //
 
-            // Add your code here
-
+            fetch("/replacecards", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: json
+            })
+                .then((res) => res.json())
+                .then((json) => {
+                    if (json.error) {
+                        alert(json.error);
+                        return;
+                    }
+                    
+                    // Show the player's new hand
+                    Hand.draw($("#player-hand"), json.hand, true);
+                })
+                .catch((err) => { alert(err); });
         });
 
         $("#confirm-hand-button").on("click", function() {
@@ -54,6 +69,26 @@ const PokerGame = (function() {
             //
 
             // Add your code here
+            fetch("/confirm", { method: "GET" })
+                .then((res) => res.json())
+                .then((json) => {
+                    if (json.error) {
+                        alert(json.error);
+                        return;
+                    }
+                    
+                    // Show the player's and computer's hands
+                    Hand.draw($("#player-hand"), json.player.hand, true);
+                    Hand.draw($("#computer-hand"), json.computer.hand, true);
+                    
+                    // Show the game result
+                    if (json.winner == 1)
+                        $("#result").text("You win!");
+                    else
+                        $("#result").text("The computer wins!");
+                    $("#result").show();
+                })
+                .catch((err) => { alert(err); });
 
         });
     }
