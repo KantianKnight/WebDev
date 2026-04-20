@@ -3,13 +3,14 @@ const express = require("express");
 // Additional packages for handling authentication
 const argon2 = require("argon2");
 const fs = require("fs");
+const path = require("path");
 const session = require("express-session");
 
 // Create the Express app
 const app = express();
 
 // Use the 'public' folder to serve static files
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Use the json middleware to parse JSON data
 app.use(express.json());
@@ -43,12 +44,26 @@ app.post("/register", async (req, res) => {
     //
 
     // Add your code here
+    const users = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "users.json"), "utf8"));
+    console.log("Users: ", users);
     
     //
     // E. Checking for the user data correctness
     //
-    
-    // Add your code here
+    if (!username || !avatar || !name || !password) {
+        res.json({ error: "Username/avatar/name/password cannot be empty." });
+        return;
+    }
+
+    if (!containWordCharsOnly(username)) {
+        res.json({ error: "Username can only contain underscores, letters, or numbers." });
+        return;
+    }
+
+    if (username in users) {
+        res.json({ error: "Username already exists." });
+        return;
+    }
 
     //
     // G. Adding the new user account
@@ -58,18 +73,24 @@ app.post("/register", async (req, res) => {
     const hash = await argon2.hash(password);
 
     // Add your code here
+    users[username] = {
+        avatar: avatar,
+        name: name,
+        password: hash
+    };
 
     //
     // H. Saving the users.json file
     //
 
     // Add your code here
+    fs.writeFileSync(path.join(__dirname, "data", "users.json"), JSON.stringify(users, null, 1));
 
     //
     // I. Sending a success response to the browser
     //
  
-    res.json({ error: "Not implemented!" });
+    res.json({ success: true });
 });
 
 // Handle the /signin endpoint
@@ -82,15 +103,21 @@ app.post("/signin", async (req, res) => {
     //
 
     // Add your code here
+    const users = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "users.json"), "utf8"));
+    console.log("Users: ", users);
 
     //
     // E. Checking for username/password
     //
 
     // Add your code here
+    if (!(username in users)) {
+        res.json({ error: "Incorrect username/password." });
+        return;
+    }
 
     // REPLACE THIS CODE WITH YOUR CODE
-    const user = { password: await argon2.hash("") };
+    const user = users[username];
 
     // If password is incorrect, return an error
     const verified = await argon2.verify(user.password, password);
@@ -104,8 +131,19 @@ app.post("/signin", async (req, res) => {
     //
 
     // Add your code here
- 
-    res.json({ error: "Not implemented!" });
+    req.session.user = {
+        username: username, 
+        avatar: user.avatar, 
+        name: user.name
+    };
+
+    res.json({ 
+        user: {
+            username: username,
+            avatar: user.avatar,
+            name: user.name
+        }
+    });
 });
 
 // Handle the /validate endpoint
@@ -116,12 +154,15 @@ app.get("/validate", (req, res) => {
     //
 
     // Add your code here
+    if (!req.session.user) {
+        res.json({ error: "No user signed in." });
+        return;
+    }
 
     //
     // D. Sending a success response with the user account
     //
-
-    res.json({ error: "Not implemented!" });
+    res.json({user: req.session.user});
 });
 
 // Handle the /signout endpoint
